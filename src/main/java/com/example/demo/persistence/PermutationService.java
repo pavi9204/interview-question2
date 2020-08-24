@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.persistence;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +10,11 @@ import java.util.List;
 @Service
 public class PermutationService {
 
+    @Autowired
+    private PermutationRepository permutationRepository;
+
+    private PermutationEntity permutationEntity = new PermutationEntity();
+
     private List<List<Integer>> arrays = new ArrayList<>();
 
     /***
@@ -17,13 +22,15 @@ public class PermutationService {
      * @param numbers
      * @return
      */
-    public List<Integer> storeNumbers(int[] numbers) {
+    public int storeNumbers(int[] numbers) {
         arrays.add(0, Collections.singletonList(0));
         List<List<Integer>> num = permute(numbers);
         for (List<Integer> perm : num) {
             arrays.add(perm);
+            permutationEntity.setNumbers(numbers);
+            permutationRepository.save(permutationEntity);
         }
-        return Collections.singletonList(arrays.indexOf(numbers) + 2);
+        return permutationEntity.getId();
     }
 
     /***
